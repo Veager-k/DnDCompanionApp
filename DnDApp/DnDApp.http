@@ -1,0 +1,6 @@
+@DnDApp_HostAddress = http://localhost:5291
+
+GET {{DnDApp_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
