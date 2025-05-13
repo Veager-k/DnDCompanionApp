@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace DnDApp.Accounts
+namespace DnDApp.Users
 {
-    public class UserModel : IdentityUser
+    public class UserModel
     {
         public int Id { get; set; }
         [Required]

@@ -1,4 +1,4 @@
-using DnDApp.Accounts;
+using DnDApp.Users;
 using DnDApp.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

@@ -1,4 +1,4 @@
-﻿using DnDApp.Accounts;
+﻿using DnDApp.Users;
 using DnDApp.Character;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,5 +17,6 @@ namespace DnDApp.Data
         }
 
         public DbSet<CharacterModel> Characters { get; set; }
+        public DbSet<UserModel> Users { get; set; }
     }
 }
