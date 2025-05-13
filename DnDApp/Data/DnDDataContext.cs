@@ -1,12 +1,13 @@
-﻿using DnDApp.Character;
+﻿using DnDApp.Accounts;
+using DnDApp.Character;
 using Microsoft.EntityFrameworkCore;
 
 namespace DnDApp.Data
 {
-    public class DnDDataContext : DbContext
+    public class DndDataContext : DbContext
     {
-        public DnDDataContext(DbContextOptions<DnDDataContext> options): 
-            base(options) 
+        public DndDataContext(DbContextOptions<DndDataContext> options) :
+            base(options)
         {
         }
 

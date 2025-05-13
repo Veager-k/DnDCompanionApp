@@ -7,8 +7,8 @@ namespace DnDApp.Character
     [Route("api/[controller]")]
     public class CharacterController : Controller
     {
-        private readonly DnDDataContext _context;
-        public CharacterController(DnDDataContext context)
+        private readonly DndDataContext _context;
+        public CharacterController(DndDataContext context)
         {
             _context = context;
         }

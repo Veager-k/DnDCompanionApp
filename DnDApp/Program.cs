@@ -1,4 +1,6 @@
+using DnDApp.Accounts;
 using DnDApp.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<DnDDataContext>(
+builder.Services.AddDbContext<DndDataContext>(
     o => o.UseNpgsql(builder.Configuration.GetConnectionString("DnDDb"))
     );
 
