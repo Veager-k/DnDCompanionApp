@@ -11,6 +11,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<TokenProvider>();
 
 builder.Services.AddDbContext<DndDataContext>(
     o => o.UseNpgsql(builder.Configuration.GetConnectionString("DnDDb"))

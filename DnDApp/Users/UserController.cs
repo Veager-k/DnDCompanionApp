@@ -14,7 +14,7 @@ namespace DnDApp.Users
         }
 
         //TODO: add hash + salt
-        //      asyc
+        //TODO: asyc
         [HttpPost("register")]
         public IActionResult RegisterAccount(UserView user)
         {
@@ -40,7 +40,7 @@ namespace DnDApp.Users
         // TODO: jwt token
         //       hash + salt
         [HttpPost("login")]
-        public ActionResult<int> LoginAccount(UserView user)
+        public ActionResult<int> LoginAccount(UserView user, TokenProvider tokenProvider)
         {
             user.Password = user.Password; // TODO: add hash + salt
 
@@ -53,8 +53,9 @@ namespace DnDApp.Users
                 return BadRequest(new { message = "Username or Password does not match." });
             }
 
+            string token = tokenProvider.Create(ExistingUser);
 
-            return Ok(new { success = true }); // Ok(new { success = true, token = token });
+            return Ok(new { success = true, token = token });
         }
 
 
