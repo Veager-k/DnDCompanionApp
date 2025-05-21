@@ -1,5 +1,7 @@
 ﻿using DnDApp.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace DnDApp.Users
 {
@@ -8,28 +10,25 @@ namespace DnDApp.Users
     public class UserController : Controller
     {
         private readonly DndDataContext _context;
-        public UserController(DndDataContext context)
+        private readonly IUserUtilities _utilities;
+        public UserController(DndDataContext context, IUserUtilities util)
         {
             _context = context;
+            _utilities = util;
         }
 
-        //TODO: add hash + salt
-        //TODO: asyc
         [HttpPost("register")]
-        public IActionResult RegisterAccount(UserView user)
+        public async Task<IActionResult> RegisterAccount(UserView user)
         {
-            user.Password = user.Password; // TODO: add hash + salt
+            user.Password = _utilities.Hash(user.Password);
 
-            var ExistingUser = _context.Users.Where(
-                x => x.UserName == user.UserName ||
-                x.HashedPassword == user.Password).FirstOrDefault();
-
+            var ExistingUser = await _context.Users.SingleOrDefaultAsync(u => u.UserName == user.UserName);
             if (ExistingUser != null)
             {
-                return BadRequest(new { message = "Username or Password is already taken." });
+                return BadRequest(new { message = "Username already taken." });
             }
 
-            _context.Users.Add(UserUtilities.ConvertToUserModel(user));
+            _context.Users.Add(_utilities.ConvertToUserModel(user));
             _context.SaveChanges();
 
             return Ok(new { success = true}); 
@@ -37,25 +36,26 @@ namespace DnDApp.Users
 
         }
 
-        // TODO: jwt token
-        //       hash + salt
         [HttpPost("login")]
-        public ActionResult<int> LoginAccount(UserView user, TokenProvider tokenProvider)
+        public async Task<ActionResult<int>> LoginAccount(UserView user, TokenProvider tokenProvider)
         {
-            user.Password = user.Password; // TODO: add hash + salt
-
-            var ExistingUser = _context.Users.Where(
-                x => x.UserName == user.UserName &&
-                x.HashedPassword == user.Password).FirstOrDefault();
+            var ExistingUser = await _context.Users.SingleOrDefaultAsync(u => u.UserName == user.UserName);
 
             if (ExistingUser == null) 
             { 
-                return BadRequest(new { message = "Username or Password does not match." });
+                return BadRequest(new { message = "User not found." });
+            }
+
+            bool verified = _utilities.VerifyUser(user.Password, ExistingUser.HashedPassword);
+
+            if (!verified)
+            {
+                return BadRequest(new { message = "The password is incorrect." });
             }
 
             string token = tokenProvider.Create(ExistingUser);
 
-            return Ok(new { success = true, token = token });
+            return Ok(new { success = true, token = token });       
         }
 
 

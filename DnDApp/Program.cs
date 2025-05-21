@@ -12,6 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<TokenProvider>();
+builder.Services.AddScoped<IUserUtilities, UserUtilities>();
 
 builder.Services.AddDbContext<DndDataContext>(
     o => o.UseNpgsql(builder.Configuration.GetConnectionString("DnDDb"))
