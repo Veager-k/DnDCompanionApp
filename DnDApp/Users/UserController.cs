@@ -37,7 +37,7 @@ namespace DnDApp.Users
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<int>> LoginAccount(UserView user, TokenProvider tokenProvider)
+        public async Task<ActionResult<int>> LoginAccount(UserView user)
         {
             var ExistingUser = await _context.Users.SingleOrDefaultAsync(u => u.UserName == user.UserName);
 
@@ -53,7 +53,7 @@ namespace DnDApp.Users
                 return BadRequest(new { message = "The password is incorrect." });
             }
 
-            string token = tokenProvider.Create(ExistingUser);
+            string token = _utilities.CreateJwtToken(ExistingUser);
 
             return Ok(new { success = true, token = token });       
         }

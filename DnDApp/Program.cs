@@ -11,7 +11,6 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<TokenProvider>();
 builder.Services.AddScoped<IUserUtilities, UserUtilities>();
 
 builder.Services.AddDbContext<DndDataContext>(

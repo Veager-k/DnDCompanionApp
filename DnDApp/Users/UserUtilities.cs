@@ -1,5 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace DnDApp.Users
 {
@@ -11,6 +16,13 @@ namespace DnDApp.Users
         private const int HashIterations = 100000;
 
         private readonly HashAlgorithmName Algorithm = HashAlgorithmName.SHA512;
+
+        private readonly IConfiguration _configuration;
+
+        public UserUtilities(IConfiguration configuration) 
+        {
+            _configuration = configuration;
+        }
 
         public string Hash(string password)
         {
@@ -38,6 +50,30 @@ namespace DnDApp.Users
             UserModel.HashedPassword = v.Password;
 
             return UserModel;
+        }
+        public string CreateJwtToken(UserModel user)
+        {
+            string secretKey = _configuration["Jwt:Secret"];
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(
+                [
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString())
+                ]),
+                Expires = DateTime.UtcNow.AddMinutes(_configuration.GetValue<int>("Jwt:ExpirationInMinutes")),
+                SigningCredentials = credentials,
+                Issuer = _configuration["Jwt:Issuer"],
+                Audience = _configuration["Jwt:Audience"]
+            };
+
+            var handler = new JsonWebTokenHandler();
+            string token = handler.CreateToken(tokenDescriptor);
+
+            return token;
         }
     }
 }
